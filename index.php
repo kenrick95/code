@@ -28,6 +28,9 @@ if (isset($_SESSION['login_session']) xor isset($_COOKIE['login_session_cookie']
 
 </head>
 <body>
+<div id="overlay">
+    <div id="loading"></div>
+</div>
 <nav id="header" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
     <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
@@ -49,7 +52,7 @@ if (isset($_SESSION['login_session']) xor isset($_COOKIE['login_session_cookie']
                     <li class="col-md-5"><small style="white-space: nowrap;">Share this URL to your friend:</small><input type="text" id="share_url" value="..."></li>
                 </ul></li>
                 <li><a id="export" title="Export" class="pointer" data-toggle="modal" data-target="#exportModal">Export</a></li>
-                <li><a id="compile" title="Compile" class="pointer" data-toggle="modal" data-target="#compileModal">Compile</a></li>
+                <!-- <li><a id="compile" title="Compile" class="pointer" data-toggle="modal" data-target="#compileModal">Compile</a></li> -->
                 <li><a id="help" title="Help" class="pointer" data-toggle="modal" data-target="#helpModal">Help</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
@@ -77,7 +80,7 @@ if (isset($_SESSION['login_session']) xor isset($_COOKIE['login_session_cookie']
         <!-- Nav tabs -->
         <ul id="sidebarHeader" class="nav nav-tabs panel-heading" role="tablist">
             <li role="presentation" class="active"><a href="#tabChat" role="tab" data-toggle="tab">Chat</a></li>
-            <li role="presentation"><a href="#tabCompile" role="tab" data-toggle="tab">Output</a></li>
+            <li role="presentation"><a href="#tabCompile" role="tab" data-toggle="tab">Compile</a></li>
             <li role="presentation"><a href="#tabSettings" role="tab" data-toggle="tab">Settings</a></li>
         </ul>
 
@@ -103,7 +106,7 @@ if (isset($_SESSION['login_session']) xor isset($_COOKIE['login_session_cookie']
             <!-- INPUT/OUTPUT -->    
                 <div class="panel panel-default">
                 <div id="compileField" class="panel-body">
-                    <p>You can compile and run the current source to Ideone.com.</p>
+                    <p>You can compile and run the current source with Sphere Engine™</p>
                     <p>Standard input: </p>
                     <textarea id="compileInput" name="compileInput" class="code form-control"></textarea>
                     <br>
@@ -127,6 +130,20 @@ if (isset($_SESSION['login_session']) xor isset($_COOKIE['login_session_cookie']
             <div role="tabpanel" class="tab-pane" id="tabSettings">
             <!-- SETTINGS -->
 
+                <div class="panel panel-default">
+                <div id="settingsBody" class="panel-body">
+                    Configure settings here.
+                </div>
+                <div id="settingsList" class="list-group">
+                    <div class="settings list-group-item">
+                        <div class="form-group">
+                            <p>Chat:</p>
+                            <label for="chatName">Display name</label>
+                            <input type="text" class="form-control" id="chatName" placeholder="Name displayed at chat" pattern="[a-zA-Z0-9 ]">
+                        </div>
+                    </div>
+                </div>
+                </div>
             </div>
         </div>
         </div>

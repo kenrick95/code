@@ -1,12 +1,23 @@
 /*jslint browser: true, sloppy: true, plusplus: true */
 /*global CodeMirror, jQuery, $, Firepad, Firebase, config */
-var codeMirror;
-var firepadRef;
-var firepad;
-var userRef;
-var firepadUser;
+
 
 $(document).ready(function () {
+    // Loader
+    $("#loading").css("margin-top", ($("#overlay").outerHeight() - $("#loading").outerHeight()) / 2  + "px");
+
+    // Variables
+    var loggedInUser = false, codeMirror, firepadRef, firepad, userRef, firepadUser,
+        currentUser, displayName, userColor,
+        defaultSource = '#include <iostream>'
+        + '\nusing namespace std;'
+        + '\n'
+        + '\nint main () {'
+        + '\n    cout << "Hello World!";'
+        + '\n    return 0;'
+        + '\n}';
+
+    // Helper function declaration
     function createCookie(name, value, days) {
         var date, expires;
         if (days) {
@@ -25,35 +36,42 @@ $(document).ready(function () {
         }
         return null;
     }
-    var loggedInUser = false;
+    function appendChat(author, time, message, color) {
+        var chatMessage = '<div class="chatMessage list-group-item">'
+                    + '<div class="chatHeader">'
+                    + '<b style="color: ' + color + '">' + author + '</b>'
+                    + ' [' + time + ']:'
+                    + '</div>'
+                    + '<div class="chatBody">' + message + '</div>'
+                    + '</div>';
+        $("#chatHistory").append(chatMessage);
+        $("#chatHistory").prop('scrollTop', ($("#chatHistory").prop('scrollHeight')));
+    }
+    function pad(number) {
+        if (number < 10) {
+            return '0' + number;
+        }
+        return number;
+    }
 
-    //CodeMirror
+    /**
+     * Calculates and sets height of codeMirror, #sidebarBody, #chatHistory, and #compileHistory
+     * @return none
+     */
     function onresize() {
         var cm = codeMirror;
         cm.setSize(document.getElementsByTagName("html")[0].offsetWidth - 20, document.getElementsByTagName("html")[0].offsetHeight - document.getElementById("header").offsetHeight - 5);
         cm.refresh();
 
-        //$("#sidebar").height($(".CodeMirror").height());
-        //$("#sidebarContainer").height($("#sidebar").height());
-        //$("#sidebarBody").height($(".CodeMirror").outerHeight() - $("#sidebarHeader").outerHeight() - 30);
         $("#sidebarBody").height($(".CodeMirror").outerHeight() - 30);
         $("#chatHistory").height($("#sidebarBody").height() - $("#chatField").outerHeight());
         $("#compileHistory").height($("#sidebarBody").height() - $("#compileField").outerHeight());
     }
-    codeMirror = CodeMirror.fromTextArea(document.getElementById('editor'), {
-        theme: "solarized",
-        indentUnit: 4,
-        lineNumbers: true,
-        tabindex: -1,
-        autofocus: true,
-        keyMap: "sublime",
-        mode: "text/x-c++src",
-        matchBrackets: true,
-        showCursorWhenSelecting: true,
-        viewportMargin: Infinity
-    });
 
-    //Firepad
+    /**
+     * get FirepadRef of current pad
+     * @return {Firebase} FirepadRef of current pad
+     */
     function getRef() {
         var ref = new Firebase('https://code-kenrick95.firebaseio.com/'),
             hash = window.location.hash.replace(/#/g, '');
@@ -67,9 +85,26 @@ $(document).ready(function () {
         config.hash = hash;
         return ref;
     }
+
+    // CodeMirror Initialization
+    codeMirror = CodeMirror.fromTextArea(document.getElementById('editor'), {
+        theme: "solarized",
+        indentUnit: 4,
+        lineNumbers: true,
+        tabindex: -1,
+        autofocus: true,
+        keyMap: "sublime",
+        mode: "text/x-c++src",
+        matchBrackets: true,
+        showCursorWhenSelecting: true,
+        viewportMargin: Infinity
+    });
+
+    // FirepadRef Initialization
     firepadRef = getRef();
 
-    var currentUser = readCookie("login_session_cookie");
+    // Firepad User
+    currentUser  = readCookie("login_session_cookie");
     if (currentUser !== null) {
         loggedInUser = true;
         currentUser = currentUser.replace(/%40/g, "@"); // "@" is encoded as %40 and stored in the cookie
@@ -77,49 +112,37 @@ $(document).ready(function () {
         userRef = firepadRef.child("users").push();
         currentUser = userRef.key();
     }
-    console.log(currentUser);
-
-    //Firepad
-    var defaultSource = '#include <iostream>'
-        + '\nusing namespace std;'
-        + '\n'
-        + '\nint main () {'
-        + '\n    cout << "Hello World!";'
-        + '\n    return 0;'
-        + '\n}';
     firepadUser = currentUser;
     if (currentUser !== null) {
         firepadUser = currentUser.replace(/\./g, "dot");
-        //firepad.setUserId(firepadUser);
-        firepadRef.child("users/" + firepadUser).once("value", function (snapshot) {
-            console.log(snapshot.val());
-        });
     }
+    displayName = currentUser;
+    console.log(currentUser);
+    console.log(firepadUser);
+
+    //Firepad Initialization
     firepad = Firepad.fromCodeMirror(firepadRef, codeMirror,
         {defaultText: defaultSource, userId: firepadUser });
+
+
+    // on Events
+    // Firepad
     firepad.on('ready', function () {
-        //firepad.setText(defaultSource);
-        // codeMirror.setOption("extraKeys", {
-        //     'Ctrl-Z': function () {
-        //         firepad.undo();
-        //         console.log("a");
-        //     },
-        //     'Ctrl-Y': function () {
-        //         firepad.redo();
-        //         console.log("b");
-        //     }
-        // });
         $("#share_url").val(config.url + "/#" + config.hash);
         firepadRef.child("users").child(firepadUser).once('value', function (snapshot) {
             $("a[href='#" + snapshot.val().currentTab + "']").tab('show');
+            if (snapshot.val().displayName) {
+                displayName = snapshot.val().displayName;
+            }
+            if (snapshot.val().color) {
+                userColor = snapshot.val().color;
+            }
         });
         onresize();
+        $("#overlay").fadeOut();
     });
-    // firepad.on('synced', function (isSynced) {
-    //     console.log(isSynced);
-    //     console.log(firepad.getText());
-    // });
 
+    // on Events
     // Mozilla Persona
     $("#sign_in").click(function () {
         navigator.id.request();
@@ -131,9 +154,6 @@ $(document).ready(function () {
     navigator.id.watch({
         loggedInUser: loggedInUser ? currentUser : null,
         onlogin: function (assertion) {
-            // A user has logged in! Here you need to:
-            // 1. Send the assertion to your backend for verification and to create a session.
-            // 2. Update your UI.
             $.ajax({
                 type: 'POST',
                 url: 'auth/login.php', // This is a URL on your website.
@@ -148,10 +168,6 @@ $(document).ready(function () {
             });
         },
         onlogout: function () {
-            // A user has logged out! Here you need to:
-            // Tear down the user's session by redirecting the user or making a call to your backend.
-            // Also, make sure loggedInUser will get set to null on the next page load.
-            // (That's a literal JavaScript null. Not false, 0, or undefined. null.)
             $.ajax({
                 type: 'POST',
                 url: 'auth/logout.php',
@@ -161,8 +177,10 @@ $(document).ready(function () {
         }
     });
 
+    // on Events
     // GitHub Gist
     $("#runExport").click(function () {
+        $(this).prop('disabled', true);
         var source = firepad.getText(),
             extension = 'cpp',
             url = config.url + "/#" + config.hash;
@@ -184,8 +202,10 @@ $(document).ready(function () {
                     gistRef = firepadRef.child("gists");
                 gistRef = gistRef.push();
                 gistRef.set({url: gistUrl, id: gistId, time: time});
+                $("#runExport").removeAttr('disabled');
             },
             error: function (xhr, status, err) {
+                $("#runExport").removeAttr('disabled');
                 console.error("Error: " + err);
             }
         });
@@ -197,6 +217,7 @@ $(document).ready(function () {
         $("#exportTBody").prepend(message);
     });
 
+    // on Events
     // Ideone.com
     function checkIdeone(link, ideoneRef) {
        //console.log(link, ideoneRef);
@@ -224,6 +245,7 @@ $(document).ready(function () {
         });
     }
     $("#runCompile").click(function () {
+        $(this).prop('disabled', true);
         var source = firepad.getText(),
             language = 1, // see https://ideone.com/faq
             action = 'submit',
@@ -250,19 +272,21 @@ $(document).ready(function () {
                 checkIdeone(link, ideoneRef);
                 $("#compileInput").val("");
                 $("#compileInput").html("");
+                $("#runCompile").removeAttr('disabled');
             },
             error: function (xhr, status, err) {
                 $("#compileInput").val("");
                 $("#compileInput").html("");
+                $("#runCompile").removeAttr('disabled');
                 console.error("Error: " + err);
             }
         });
     });
     firepadRef.child("ideone").on("child_added", function (snapshot) {
         var data = snapshot.val(),
-            message = '<tr id="ideone-' + data.link + '"><td><a href="https://ideone.com/' + data.link + '">' + data.link + '</a></td>'
-                    + '<td>' + data.time + '</td>'
-                    + '<td>' + data.status + '</td></tr>',
+            // message = '<tr id="ideone-' + data.link + '"><td><a href="https://ideone.com/' + data.link + '">' + data.link + '</a></td>'
+            //         + '<td>' + data.time + '</td>'
+            //         + '<td>' + data.status + '</td></tr>',
             compileMessage = '<div class="compileMessage list-group-item">'
                     + '<div class="compileHeader">'
                     + '<a href="https://ideone.com/' + data.link + '">' + data.link + '</a> at ' + data.time + ':'
@@ -280,15 +304,15 @@ $(document).ready(function () {
         }
         compileMessage += '</div></div>';
 
-        $("#compileTBody").prepend(message);
+        // $("#compileTBody").prepend(message);
         $("#compileHistory").prepend(compileMessage);
     });
     firepadRef.child("ideone").on("child_changed", function (snapshot) {
         var data = snapshot.val(), message = '', compileMessage = '';
         // console.log(data);
-        message = '<td><a href="https://ideone.com/' + data.link + '">' + data.link + '</a></td>'
-                    + '<td>' + data.time + '</td>'
-                    + '<td>' + data.status + '</td>';
+        // message = '<td><a href="https://ideone.com/' + data.link + '">' + data.link + '</a></td>'
+        //             + '<td>' + data.time + '</td>'
+        //             + '<td>' + data.status + '</td>';
         if (!data.details) {
             compileMessage += 'Status: <div class="status code">' + data.status + '</div>';
         } else {
@@ -300,29 +324,17 @@ $(document).ready(function () {
             }
         }
 
-        $("#ideone-" + data.link).html(message);
+        // $("#ideone-" + data.link).html(message);
         $("#compileBody-ideone-" + data.link).html(compileMessage);
     });
 
+    // on Events
+    // resize
     window.addEventListener("resize", onresize);
+    $("#compileInput").resize(function () { console.log(a); onresize(); });
 
+    // on Events
     // Chat
-    function appendChat(author, time, message) {
-        var chatMessage = '<div class="chatMessage list-group-item">'
-                    + '<div class="chatHeader">'
-                    + author + ' [' + time + ']:'
-                    + '</div>'
-                    + '<div class="chatBody">' + message + '</div>'
-                    + '</div>';
-        $("#chatHistory").append(chatMessage);
-        $("#chatHistory").prop('scrollTop', ($("#chatHistory").prop('scrollHeight')));
-    }
-    function pad(number) {
-        if (number < 10) {
-            return '0' + number;
-        }
-        return number;
-    }
     $("#chatInput").keydown(function (event) {
         if (event.which === 13 && event.shiftKey === false) {
             event.preventDefault();
@@ -342,20 +354,28 @@ $(document).ready(function () {
                 message = $(this).val();
             $(this).val("");
             $(this).html("");
-            chatRef.set({author: currentUser, time: time, message: message});
+            chatRef.set({author: displayName, time: time, message: message, color: userColor});
         }
     });
     firepadRef.child("chat").on("child_added", function (snapshot) {
         var data = snapshot.val();
-        appendChat(data.author, data.time, data.message);
+        appendChat(data.author, data.time, data.message, data.color);
     });
 
-    // Twitter Bootstrap keep-open class
+    // Settings save
+    $("#chatName").focusout(function () {
+        displayName = $(this).val();
+        firepadRef.child("users").child(firepadUser).update({ displayName: displayName });
+    });
+
+    // Bootstrap keep-open class
     $('.dropdown-menu').click(function (event) {
         if ($(this).hasClass('keep-open')) {
             event.stopPropagation();
         }
     });
+
+    // Bootstrap save current tab to Firebase
     $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
         // e.target // newly activated tab
         // e.relatedTarget // previous active tab
@@ -365,6 +385,7 @@ $(document).ready(function () {
             firepadRef.child("users").child(firepadUser).update({currentTab: tabRef});
         }
     });
+
     // Auto-select share URL
     $("#share_url").focus(function () {
         this.select();
@@ -375,7 +396,7 @@ Firebase!
 - Source code, cursor, OT --> done by Firepad
 -- Undo and redo: no need, for now
 - DONE Compilation history
-- TODO Chatting and history
+- DONE Chatting and history
 - TODO Presence: how  many people are online, who are online
 
 -- remember to save all the states, including ideone history
@@ -384,5 +405,5 @@ Firebase!
 -- PHP to proxy the communication
 http://ideone.com/sphere-engine
 
-- TODO Tabs, for viewing past input and outputs?
+- DONE Tabs, for viewing past input and outputs?
  */
