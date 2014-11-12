@@ -1,0 +1,142 @@
+@font-face {
+    font-family: openSansRegular;
+    src: url('fonts/OpenSans-Regular.eot');
+    src: url('fonts/OpenSans-Regular.eot?iefix') format('eot'), url('fonts/OpenSans-Regular.woff') format('woff'), url('fonts/OpenSans-Regular.ttf') format('truetype'), url('fonts/OpenSans-Regular.svg#webfont') format('svg');
+}
+@font-face {
+    font-family: openSansLight;
+    src: url('fonts/OpenSans-Light.eot');
+    src: url('fonts/OpenSans-Light.eot?iefix') format('eot'), url('fonts/OpenSans-Light.woff') format('woff'), url('fonts/OpenSans-Light.ttf') format('truetype'), url('fonts/OpenSans-Light.svg#webfont') format('svg');
+}
+@font-face {
+    font-family: openSansBold;
+    src: url('fonts/OpenSans-Bold.eot');
+    src: url('fonts/OpenSans-Bold.eot?iefix') format('eot'), url('fonts/OpenSans-Bold.woff') format('woff'), url('fonts/OpenSans-Bold.ttf') format('truetype'), url('fonts/OpenSans-Bold.svg#webfont') format('svg');
+}
+* {
+    padding: 0;
+    margin: 0;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    font-family: openSansRegular;
+}
+body {
+    padding-top: 50px;
+}
+#header {
+    background: #0095DD;
+    color: #fff;
+}
+.dropdown-menu {
+    background: #0095DD;
+}
+.open >a  {
+    background-color: rgba(0, 0, 0, 0.1) !important;
+}
+#header #title {
+    font-weight: bold;
+}
+#header a {
+    color: #fff;
+}
+#header a:hover {
+    background-color: rgba(0,0,0,0.1);
+}
+/* see more colors here http://clrs.cc/ */
+#main {
+    height: auto;
+}
+.code {
+    font-family: monospace;
+}
+#user_menu { /* IE fix*/
+    margin-right: 300px;
+}
+#sidebar {
+    float: right;
+    z-index: 1024;
+    width: 300px;
+    position: absolute; /* IE fix*/
+    right: 0px;
+    top: 0px;
+    display: block;
+    color: #111;
+    margin-top: -1px;
+}
+#sidebarHeader {
+    padding-bottom: 0;
+    border: 0;
+    border-radius: 0;
+}
+#sidebarHeader > li > a {
+    color: #fff;
+}
+#sidebarHeader > li > a:hover, #sidebarHeader > li > a:focus, #sidebarHeader > li.active > a {
+    color: #0095DD;
+}
+#sidebarBody {
+    height: 100%;
+    width: 300px;
+}
+#sidebarBody a {
+    color: #0095DD;
+}
+#sidebarContainer {
+    margin-bottom: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+#chatHistory, #compileHistory {
+    overflow-y: auto;
+    height: 300px;
+}
+.code.input, .code.output {
+    max-width: 220px;
+}
+.chatMessage {
+
+}
+.chatHeader {
+
+}
+.chatBody {
+
+}
+#chatField {
+    padding: 10px 5px;
+}
+.pointer {
+    cursor: pointer;
+}
+#menu {
+    display: inline-block;
+}
+#menu>ul {
+    display: block;
+}
+#menu>ul>li {
+    display: inline-block;
+    font-size: 0.7em;
+    color: white;
+}
+#menu>ul>li>a {
+    color: white;
+    text-decoration: none;
+    min-width: 4em;
+    padding: 0 1em;
+    cursor: pointer;
+    display: inline-block;
+}
+#menu>ul>li>a:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+.persona_logo {
+    height: 18px;
+}
+#share_url {
+    color: #aaa;
+}
