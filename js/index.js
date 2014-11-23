@@ -36,22 +36,30 @@ $(document).ready(function () {
         }
         return null;
     }
-    function appendChat(author, time, message, color) {
-        var chatMessage = '<div class="chatMessage list-group-item">'
-                    + '<div class="chatHeader">'
-                    + '<b style="color: ' + color + '">' + author + '</b>'
-                    + ' [' + time + ']:'
-                    + '</div>'
-                    + '<div class="chatBody">' + message + '</div>'
-                    + '</div>';
-        $("#chatHistory").append(chatMessage);
-        $("#chatHistory").prop('scrollTop', ($("#chatHistory").prop('scrollHeight')));
-    }
     function pad(number) {
         if (number < 10) {
             return '0' + number;
         }
         return number;
+    }
+    function stringCleaner(value) {
+        var lt = /</g,
+            gt = />/g,
+            ap = /'/g,
+            ic = /"/g;
+        value = value.toString().replace(lt, "&lt;").replace(gt, "&gt;").replace(ap, "&#39;").replace(ic, "&#34;");
+        return value;
+    }
+    function appendChat(author, time, message, color) {
+        var chatMessage = '<div class="chatMessage list-group-item">'
+                    + '<div class="chatHeader">'
+                    + '<b style="color: ' + color + '">' + stringCleaner(author) + '</b>'
+                    + ' [' + time + ']:'
+                    + '</div>'
+                    + '<div class="chatBody">' + stringCleaner(message) + '</div>'
+                    + '</div>';
+        $("#chatHistory").append(chatMessage);
+        $("#chatHistory").prop('scrollTop', ($("#chatHistory").prop('scrollHeight')));
     }
 
     /**
@@ -236,7 +244,7 @@ $(document).ready(function () {
                 //console.log(data);
                 ideoneRef.update({link: link, status: status, time: time, details: details});
                 if (status !== "Done") {
-                    setTimeout(function () { checkIdeone(link, ideoneRef); }, 500);
+                    setTimeout(function () { checkIdeone(link, ideoneRef); }, 1000);
                 }
             },
             error: function (xhr, status, err) {
@@ -308,7 +316,7 @@ $(document).ready(function () {
         $("#compileHistory").prepend(compileMessage);
     });
     firepadRef.child("ideone").on("child_changed", function (snapshot) {
-        var data = snapshot.val(), message = '', compileMessage = '';
+        var data = snapshot.val(), /*message = '', */compileMessage = '';
         // console.log(data);
         // message = '<td><a href="https://ideone.com/' + data.link + '">' + data.link + '</a></td>'
         //             + '<td>' + data.time + '</td>'
@@ -331,7 +339,6 @@ $(document).ready(function () {
     // on Events
     // resize
     window.addEventListener("resize", onresize);
-    $("#compileInput").resize(function () { console.log(a); onresize(); });
 
     // on Events
     // Chat
