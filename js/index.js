@@ -2,6 +2,7 @@
 /*global CodeMirror, jQuery, $, Firepad, Firebase, config */
 
 
+
 $(document).ready(function () {
     // Loader
     $("#loading").css("margin-top", ($("#overlay").outerHeight() - $("#loading").outerHeight()) / 2  + "px");
@@ -37,16 +38,11 @@ $(document).ready(function () {
         return null;
     }
     function pad(number) {
-        if (number < 10) {
-            return '0' + number;
-        }
+        if (number < 10) { return '0' + number; }
         return number;
     }
     function stringCleaner(value) {
-        var lt = /</g,
-            gt = />/g,
-            ap = /'/g,
-            ic = /"/g;
+        var lt = /</g, gt = />/g, ap = /'/g, ic = /"/g;
         value = value.toString().replace(lt, "&lt;").replace(gt, "&gt;").replace(ap, "&#39;").replace(ic, "&#34;");
         return value;
     }
@@ -72,7 +68,7 @@ $(document).ready(function () {
         cm.refresh();
 
         $("#sidebarBody").height($(".CodeMirror").outerHeight() - 30);
-        $("#chatHistory").height($("#sidebarBody").height() - $("#chatField").outerHeight());
+        $("#chatHistory").height($("#sidebarBody").height() - $("#chatField").outerHeight() - $("#chatPresence").outerHeight());
         $("#compileHistory").height($("#sidebarBody").height() - $("#compileField").outerHeight());
     }
 
@@ -116,21 +112,44 @@ $(document).ready(function () {
     if (currentUser !== null) {
         loggedInUser = true;
         currentUser = currentUser.replace(/%40/g, "@"); // "@" is encoded as %40 and stored in the cookie
+        firepadUser = currentUser.replace(/\./g, "dot");
+
+        // get color assigned to this user
+        userRef = firepadRef.child(firepadUser).once("value", function (snapshot) {
+            userColor = snapshot.val().color;
+            displayName = snapshot.val().displayName;
+        });
     } else {
         userRef = firepadRef.child("users").push();
         currentUser = userRef.key();
+        firepadUser = currentUser;
+
+        // assign new color
+        var COLORS = [
+            "#8A2BE2", "#7FFF00", "#DC143C", "#00FFFF", "#8FBC8F", "#FF8C00", "#FF00FF",
+            "#FFD700", "#F08080", "#90EE90", "#FF6347"];
+        var DEFAULT_NICKNAMES = [
+            "Friendly Fox",
+            "Brilliant Beaver",
+            "Observant Owl",
+            "Gregarious Giraffe",
+            "Wild Wolf",
+            "Silent Seal",
+            "Wacky Whale",
+            "Curious Cat",
+            "Intelligent Iguana"
+        ];
+        userColor = COLORS[Math.floor(Math.random() * COLORS.length)];
+        displayName = DEFAULT_NICKNAMES[Math.floor(Math.random() * DEFAULT_NICKNAMES.length)];
     }
-    firepadUser = currentUser;
-    if (currentUser !== null) {
-        firepadUser = currentUser.replace(/\./g, "dot");
-    }
-    displayName = currentUser;
     console.log(currentUser);
     console.log(firepadUser);
+    console.log(displayName);
+    console.log(userColor);
 
     //Firepad Initialization
     firepad = Firepad.fromCodeMirror(firepadRef, codeMirror,
-        {defaultText: defaultSource, userId: firepadUser });
+        {defaultText: defaultSource, userId: firepadUser, userColor: userColor });
 
 
     // on Events
@@ -146,6 +165,7 @@ $(document).ready(function () {
                 userColor = snapshot.val().color;
             }
         });
+        $("#chatName").val(displayName);
         onresize();
         $("#overlay").fadeOut();
     });
@@ -369,6 +389,27 @@ $(document).ready(function () {
         appendChat(data.author, data.time, data.message, data.color);
     });
 
+    // on Events
+    // Presence
+    var presenceRef = new Firebase('https://code-kenrick95.firebaseio.com/.info/connected');
+    presenceRef.on("value", function (snapshot) {
+        if (snapshot.val() === true) {
+            var con = firepadRef.child("connections").child(firepadUser).set(true);
+            con.onDisconnect().remove();
+            if (loggedInUser) {
+                userRef.child("last_online").onDisconnect().set(Firebase.ServerValue.TIMESTAMP);
+            } else {
+                // remove display name, etc. for anonymous user from "user" tree
+                // It won't affect "chat" history
+                userRef.onDisconnect().remove();
+            }
+        }
+    });
+    firepadRef.child("connections").on("value", function (snapshot) {
+        var len = Object.keys(snapshot.val()).length;
+        $("#chatPresence").html("<strong>" + len + "</strong> people online (including you)");
+    });
+
     // Settings save
     $("#chatName").focusout(function () {
         displayName = $(this).val();
@@ -404,9 +445,10 @@ Firebase!
 -- Undo and redo: no need, for now
 - DONE Compilation history
 - DONE Chatting and history
-- TODO Presence: how  many people are online, who are online
+- DONE Presence: how  many people are online, TODO who are online
+-- TODO not to assign same name/ color for users
 
--- remember to save all the states, including ideone history
+-- DONE remember to save all the states, including ideone history
 
 - DONE Use ideone API (Sphere Engine™)
 -- PHP to proxy the communication

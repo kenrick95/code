@@ -89,6 +89,9 @@ if (isset($_SESSION['login_session']) xor isset($_COOKIE['login_session_cookie']
             <div role="tabpanel" class="tab-pane active" id="tabChat">
             <!-- CHAT -->
                 <div class="panel panel-default">
+                <div id="chatPresence" class="panel-body">
+                    N people online
+                </div>
                 <div id="chatHistory" class="list-group">
                     <!-- <div class="chatMessage list-group-item">
                         <div class="chatHeader">
