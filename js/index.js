@@ -114,7 +114,7 @@ $(document).ready(function () {
         currentUser = currentUser.replace(/%40/g, "@"); // "@" is encoded as %40 and stored in the cookie
         firepadUser = currentUser.replace(/\./g, "dot");
 
-        // get color assigned to this user
+        // get color assigned to this user and the display name saved
         userRef = firepadRef.child(firepadUser).once("value", function (snapshot) {
             userColor = snapshot.val().color;
             displayName = snapshot.val().displayName;
@@ -394,7 +394,8 @@ $(document).ready(function () {
     var presenceRef = new Firebase('https://code-kenrick95.firebaseio.com/.info/connected');
     presenceRef.on("value", function (snapshot) {
         if (snapshot.val() === true) {
-            var con = firepadRef.child("connections").child(firepadUser).set(true);
+            var con = firepadRef.child("connections").child(firepadUser);
+            con.set(true);
             con.onDisconnect().remove();
             if (loggedInUser) {
                 userRef.child("last_online").onDisconnect().set(Firebase.ServerValue.TIMESTAMP);
@@ -453,6 +454,7 @@ Firebase!
 - DONE Use ideone API (Sphere Engine™)
 -- PHP to proxy the communication
 http://ideone.com/sphere-engine
+- TODO support more language: ideone & codeMirror
 
 - DONE Tabs, for viewing past input and outputs?
  */

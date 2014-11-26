@@ -41,7 +41,7 @@ if (isset($_SESSION['login_session']) xor isset($_COOKIE['login_session_cookie']
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a id="brand" class="navbar-brand" href="#">Code!</a>
+            <a id="brand" class="navbar-brand pointer" data-toggle="modal" data-target="#helpModal">Code!</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
@@ -231,7 +231,21 @@ if (isset($_SESSION['login_session']) xor isset($_COOKIE['login_session_cookie']
                 <h4 class="modal-title" id="helpModalLabel">Help</h4>
             </div>
             <div class="modal-body">
-                <p>Code! uses Sphere Engine™, Bootstrap, CodeMirror (syntax highlighting), Firebase and Firepad (real-time sync), Mozilla Persona (identity provider), GitHub Gist API.</p>
+                <p>Welcome to <b>Code</b>, a collaborative coding web-based application built to suit your coding needs. Built using CodeMirror with Sublime keymap binding, it serves as a powerful code editor. Moreover, data persistency is achived powered by Firebase and Firepad. The code can be directly run at the cloud via Ideone (Sphere Engine) and exported to GitHub Gist. To enhance the collaboration experience, a chat application is up there. Enjoy your time here and tell it to your friends.</p>
+                <p>Do coding at the large area on the left. Do chatting, run codes (via Ideone), or change settings at sidebar on the right. Sign in (via Mozilla Persona) to achieve settings persistency. Export to GitHub Gist by "Export" button. Share the link by copying the URL of the page, or by getting the URL at "Share" button. "Help" button pops this window up.</p>
+                <p>If you find this application useful, please consider donating.
+                <!-- Donate -->
+                <form class="pp-donate" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
+                    <input type="hidden" name="cmd" value="_donations">
+                    <input type="hidden" name="business" value="kenrick95@gmail.com">
+                    <input type="hidden" name="item_name" value="Donation to Kenrick (@kenrick95) for Code!">
+                    <input type="hidden" name="no_note" value="0">
+                    <button name="submit" class="btn btn-primary"><img src="img/icon_pp.svg" alt="Donate"> Donate</button>
+                    <img alt="" border="0" src="https://www.paypalobjects.com/en_GB/i/scr/pixel.gif" style="width:1px;height:1px">
+                </form>
+                <!-- /.Donate -->
+                </p>
+                <p>Credits: Code! uses Sphere Engine™ (compile and run), Bootstrap, CodeMirror (syntax highlighting), Firebase and Firepad (real-time sync of code, chat, and presence), Mozilla Persona (identity provider), GitHub Gist API (exporting source code).</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
