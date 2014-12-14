@@ -44,6 +44,34 @@ $(document).ready(function () {
         value = value.toString().replace(lt, "&lt;").replace(gt, "&gt;").replace(ap, "&#39;").replace(ic, "&#34;");
         return value;
     }
+    function trim(str, charlist) {
+        // http://phpjs.org/functions/trim/
+        var whitespace, l = 0, i = 0;
+        str += '';
+        if (!charlist) {
+            // default list
+            whitespace = ' \n\r\t\f\x0b\xa0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000';
+        } else {
+            // preg_quote custom list
+            charlist += '';
+            whitespace = charlist.replace(/([\[\]\(\)\.\?\/\*\{\}\+\$\^\:])/g, '$1');
+        }
+        l = str.length;
+        for (i = 0; i < l; i++) {
+            if (whitespace.indexOf(str.charAt(i)) === -1) {
+                str = str.substring(i);
+                break;
+            }
+        }
+        l = str.length;
+        for (i = l - 1; i >= 0; i--) {
+            if (whitespace.indexOf(str.charAt(i)) === -1) {
+                str = str.substring(0, i + 1);
+                break;
+            }
+        }
+        return whitespace.indexOf(str.charAt(0)) === -1 ? str : '';
+    }
     function appendChat(author, time, message, color) {
         var chatMessage = '<div class="chatMessage list-group-item">'
                     + '<div class="chatHeader">'
@@ -208,7 +236,7 @@ $(document).ready(function () {
     $("#runExport").click(function () {
         $(this).prop('disabled', true);
         var source = firepad.getText(),
-            extension = $("#editorLanguage option:selected").attr("data-extension"),
+            extension = config.language.extension,
             url = config.url + "/#" + config.hash;
         $.ajax({
             type: 'POST',
@@ -273,7 +301,7 @@ $(document).ready(function () {
     $("#runCompile").click(function () {
         $(this).prop('disabled', true);
         var source = firepad.getText(),
-            language = $("#editorLanguage").val(), // see https://ideone.com/faq
+            language = config.language.val, // see https://ideone.com/faq
             action = 'submit',
             input = $("#compileInput").val();
         $.ajax({
@@ -406,6 +434,7 @@ $(document).ready(function () {
         firepadRef.child("users").child(firepadUser).update({ displayName: displayName });
     });
 
+    // Language
     function loadJS(src, callback) {
         var s = document.createElement('script');
         s.src = src;
@@ -422,15 +451,36 @@ $(document).ready(function () {
     $("#editorLanguage").change(function loadModeForSelectedOption(e) {
         var selected = $("#editorLanguage option:selected"),
             script = selected.attr('data-script'),
-            mode = selected.attr('data-mime-type');
-        console.log(script);
-        loadJS(script, function () {
-            codeMirror.setOption("mode", mode);
-        });
-        $("#selectedLanguage").text(selected.text());
+            mode = selected.attr('data-mime-type'),
+            extension = selected.attr('data-extension'),
+            val = selected.val();
+        config.language.script = script;
+        config.language.mode = mode;
+        config.language.extension = extension;
+        config.language.val = val;
+        config.language.name = trim(selected.text());
+        firepadRef.child("language").set(config.language);
     });
-    $("#editorLanguage").val(1);
-    $("#selectedLanguage").text("C++");
+    firepadRef.child("language").on("value", function (snapshot) {
+        config.language = snapshot.val();
+        console.log(config.language);
+        if (config.language === null) {
+            config.language = {
+                script: "https://code-kenrick95.firebaseapp.com/js/mode/clike/clike.js",
+                mode: "text/x-c++src",
+                extension: "cpp",
+                val: "1",
+                name: "C++"
+            };
+            firepadRef.child("language").set(config.language);
+        }
+
+        loadJS(config.language.script, function () {
+            codeMirror.setOption("mode", config.language.mode);
+            $("#selectedLanguage").text(config.language.name);
+            $("#editorLanguage").selectpicker('val', config.language.val);
+        });
+    });
 
     // Bootstrap keep-open class
     $('.dropdown-menu').click(function (event) {
@@ -455,21 +505,3 @@ $(document).ready(function () {
         this.select();
     });
 });
-/*
-Firebase!
-- Source code, cursor, OT --> done by Firepad
--- Undo and redo: no need, for now
-- DONE Compilation history
-- DONE Chatting and history
-- DONE Presence: how  many people are online, TODO who are online
--- TODO not to assign same name/ color for users
-
--- DONE remember to save all the states, including ideone history
-
-- DONE Use ideone API (Sphere Engine™)
--- PHP to proxy the communication
-http://ideone.com/sphere-engine
-- TODO support more language: ideone & codeMirror
-
-- DONE Tabs, for viewing past input and outputs?
- */

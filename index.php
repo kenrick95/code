@@ -111,7 +111,7 @@ if (isset($_SESSION['login_session']) xor isset($_COOKIE['login_session_cookie']
                 <div class="panel panel-default">
                 <div id="compileField" class="panel-body">
                     <p>You can compile and run the current source with Sphere Engine™</p>
-                    <p>Selected language: <code id="selectedLanguage"></code></p>
+                    <p>Selected language: <span id="selectedLanguage" class="label label-primary"></span></p>
                     <p>Standard input: </p>
                     <textarea id="compileInput" name="compileInput" class="code form-control"></textarea>
                     <br>
@@ -315,7 +315,8 @@ var config = {
     avatarUrl: <?php if ($loggedIn) { echo '"http://www.gravatar.com/avatar/'. md5($email) . '.png"'; } else { echo "null"; } ?>,
     hash: null,
     domain: <?php echo "'". $_config['domain']. "'"; ?>,
-    url: <?php echo "'". $_config['url']. "'"; ?>
+    url: <?php echo "'". $_config['url']. "'"; ?>,
+    language: null
 };
 </script>
 <script src="js/index.js"></script>
