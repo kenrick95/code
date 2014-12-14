@@ -31,7 +31,8 @@ body {
     color: #fff;
 }
 .dropdown-menu {
-    background: #0095DD;
+    /*background: #0095DD;*/
+    color: #0095DD;
 }
 .open >a  {
     background-color: rgba(0, 0, 0, 0.1) !important;
@@ -165,4 +166,7 @@ body {
     background-image: url("../img/loading.gif");
     background-position: center center;
     background-repeat: no-repeat;
+}
+.selectpicker {
+    background: #fff;
 }

@@ -1,8 +1,6 @@
 /*jslint browser: true, sloppy: true, plusplus: true */
 /*global CodeMirror, jQuery, $, Firepad, Firebase, config */
 
-
-
 $(document).ready(function () {
     // Loader
     $("#loading").css("margin-top", ($("#overlay").outerHeight() - $("#loading").outerHeight()) / 2  + "px");
@@ -210,7 +208,7 @@ $(document).ready(function () {
     $("#runExport").click(function () {
         $(this).prop('disabled', true);
         var source = firepad.getText(),
-            extension = 'cpp',
+            extension = $("#editorLanguage option:selected").attr("data-extension"),
             url = config.url + "/#" + config.hash;
         $.ajax({
             type: 'POST',
@@ -275,7 +273,7 @@ $(document).ready(function () {
     $("#runCompile").click(function () {
         $(this).prop('disabled', true);
         var source = firepad.getText(),
-            language = 1, // see https://ideone.com/faq
+            language = $("#editorLanguage").val(), // see https://ideone.com/faq
             action = 'submit',
             input = $("#compileInput").val();
         $.ajax({
@@ -288,6 +286,9 @@ $(document).ready(function () {
                 input: input
             },
             success: function (res, stat, xhr) {
+                $("#compileInput").val("");
+                $("#compileInput").html("");
+                $("#runCompile").removeAttr('disabled');
                 var data = JSON.parse(res),
                     status = data.message.status,
                     details = data.message.details,
@@ -298,9 +299,6 @@ $(document).ready(function () {
                 //console.log(data);
                 ideoneRef.set({link: link, status: status, time: time, details: details});
                 checkIdeone(link, ideoneRef);
-                $("#compileInput").val("");
-                $("#compileInput").html("");
-                $("#runCompile").removeAttr('disabled');
             },
             error: function (xhr, status, err) {
                 $("#compileInput").val("");
@@ -312,9 +310,6 @@ $(document).ready(function () {
     });
     firepadRef.child("ideone").on("child_added", function (snapshot) {
         var data = snapshot.val(),
-            // message = '<tr id="ideone-' + data.link + '"><td><a href="https://ideone.com/' + data.link + '">' + data.link + '</a></td>'
-            //         + '<td>' + data.time + '</td>'
-            //         + '<td>' + data.status + '</td></tr>',
             compileMessage = '<div class="compileMessage list-group-item">'
                     + '<div class="compileHeader">'
                     + '<a href="https://ideone.com/' + data.link + '">' + data.link + '</a> at ' + data.time + ':'
@@ -332,15 +327,10 @@ $(document).ready(function () {
         }
         compileMessage += '</div></div>';
 
-        // $("#compileTBody").prepend(message);
         $("#compileHistory").prepend(compileMessage);
     });
     firepadRef.child("ideone").on("child_changed", function (snapshot) {
         var data = snapshot.val(), /*message = '', */compileMessage = '';
-        // console.log(data);
-        // message = '<td><a href="https://ideone.com/' + data.link + '">' + data.link + '</a></td>'
-        //             + '<td>' + data.time + '</td>'
-        //             + '<td>' + data.status + '</td>';
         if (!data.details) {
             compileMessage += 'Status: <div class="status code">' + data.status + '</div>';
         } else {
@@ -352,7 +342,6 @@ $(document).ready(function () {
             }
         }
 
-        // $("#ideone-" + data.link).html(message);
         $("#compileBody-ideone-" + data.link).html(compileMessage);
     });
 
@@ -416,6 +405,32 @@ $(document).ready(function () {
         displayName = $(this).val();
         firepadRef.child("users").child(firepadUser).update({ displayName: displayName });
     });
+
+    function loadJS(src, callback) {
+        var s = document.createElement('script');
+        s.src = src;
+        s.async = true;
+        s.onreadystatechange = s.onload = function () {
+            var state = s.readyState;
+            if (!callback.done && (!state || /loaded|complete/.test(state))) {
+                callback.done = true;
+                callback();
+            }
+        };
+        document.getElementsByTagName('body')[0].appendChild(s);
+    }
+    $("#editorLanguage").change(function loadModeForSelectedOption(e) {
+        var selected = $("#editorLanguage option:selected"),
+            script = selected.attr('data-script'),
+            mode = selected.attr('data-mime-type');
+        console.log(script);
+        loadJS(script, function () {
+            codeMirror.setOption("mode", mode);
+        });
+        $("#selectedLanguage").text(selected.text());
+    });
+    $("#editorLanguage").val(1);
+    $("#selectedLanguage").text("C++");
 
     // Bootstrap keep-open class
     $('.dropdown-menu').click(function (event) {

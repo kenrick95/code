@@ -24,6 +24,7 @@ if (isset($_SESSION['login_session']) xor isset($_COOKIE['login_session_cookie']
     <link rel="stylesheet" href="https://code-kenrick95.firebaseapp.com/css/codemirror.css">
     <link rel="stylesheet" href="https://code-kenrick95.firebaseapp.com/css/theme/solarized.css">
     <link rel="stylesheet" href="https://cdn.firebase.com/libs/firepad/1.1.0/firepad.css" />
+    <link rel="stylesheet" href="css/bootstrap-select.min.css">
     <link rel="stylesheet" href="css/style.css">
 
 </head>
@@ -110,6 +111,7 @@ if (isset($_SESSION['login_session']) xor isset($_COOKIE['login_session_cookie']
                 <div class="panel panel-default">
                 <div id="compileField" class="panel-body">
                     <p>You can compile and run the current source with Sphere Engine™</p>
+                    <p>Selected language: <code id="selectedLanguage"></code></p>
                     <p>Standard input: </p>
                     <textarea id="compileInput" name="compileInput" class="code form-control"></textarea>
                     <br>
@@ -143,6 +145,63 @@ if (isset($_SESSION['login_session']) xor isset($_COOKIE['login_session_cookie']
                             <p>Chat:</p>
                             <label for="chatName">Display name</label>
                             <input type="text" class="form-control" id="chatName" placeholder="Name displayed at chat" pattern="[a-zA-Z0-9 ]">
+                        </div>
+                    </div>
+                    <div class="settings list-group-item">
+                        <div class="form-group">
+                            <p>IDE:</p>
+                            <label for="editorLanguage">Programming language</label>
+                            <select name="editorLanguage" id="editorLanguage" class="selectpicker">
+                                <option
+                                    value="11"
+                                    data-extension = "c"
+                                    data-mime-type="text/x-csrc"
+                                    data-script="https://code-kenrick95.firebaseapp.com/js/mode/clike/clike.js">
+                                    C
+                                </option>
+                                <option
+                                    value="1"
+                                    data-extension = "cpp"
+                                    data-mime-type="text/x-c++src"
+                                    data-script="https://code-kenrick95.firebaseapp.com/js/mode/clike/clike.js">
+                                    C++
+                                </option>
+                                <option
+                                    value="10"
+                                    data-extension = "java"
+                                    data-mime-type="text/x-java"
+                                    data-script="https://code-kenrick95.firebaseapp.com/js/mode/clike/clike.js">
+                                    Java
+                                </option>
+                                <option
+                                    value="22"
+                                    data-extension = "pas"
+                                    data-mime-type="text/x-pascal"
+                                    data-script="https://code-kenrick95.firebaseapp.com/js/mode/pascal/pascal.js">
+                                    Pascal
+                                </option>
+                                <option
+                                    value="3"
+                                    data-extension = "pl"
+                                    data-mime-type="text/x-perl"
+                                    data-script="https://code-kenrick95.firebaseapp.com/js/mode/perl/perl.js">
+                                    Perl
+                                </option>
+                                <option
+                                    value="4"
+                                    data-extension = "py"
+                                    data-mime-type = "text/x-python"
+                                    data-script="https://code-kenrick95.firebaseapp.com/js/mode/python/python.js">
+                                    Python 2
+                                </option>
+                                <option
+                                    value="17"
+                                    data-extension = "rb"
+                                    data-mime-type = "text/x-ruby"
+                                    data-script = "https://code-kenrick95.firebaseapp.com/js/mode/ruby/ruby.js">
+                                    Ruby
+                                </option>
+                                </select>
                         </div>
                     </div>
                 </div>
@@ -189,40 +248,6 @@ if (isset($_SESSION['login_session']) xor isset($_COOKIE['login_session_cookie']
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
-<?php
-// <div class="modal fade" id="compileModal" tabindex="-1" role="dialog" aria-labelledby="compileModalLabel" aria-hidden="true">
-//     <div class="modal-dialog">
-//         <div class="modal-content">
-//             <div class="modal-header">
-//                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-//                 <h4 class="modal-title" id="compileModalLabel">Compile with Sphere Engine™</h4>
-//             </div>
-//             <div class="modal-body">
-//                 <p>You can compile and run the current source to Ideone.com.</p>
-//                 <p>Standard input: </p>
-//                 <textarea id="compileInput" name="compileInput" class="code form-control"></textarea>
-//                 <br>
-//                 <button type="button" class="btn btn-primary" id="runCompile">Run</button>
-
-//                 <table class="table">
-//                 <thead>
-//                     <tr>
-//                         <th>Link</th>
-//                         <th>Time</th>
-//                         <th>Status</th>
-//                     </tr>
-//                 </thead>
-//                 <tbody id="compileTBody">
-//                 </tbody>
-//                 </table>
-//             </div>
-//             <div class="modal-footer">
-//                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-//             </div>
-//         </div><!-- /.modal-content -->
-//     </div><!-- /.modal-dialog -->
-// </div><!-- /.modal -->
-?>
 <div class="modal fade" id="helpModal" tabindex="-1" role="dialog" aria-labelledby="helpModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -280,6 +305,7 @@ if (isset($_SESSION['login_session']) xor isset($_COOKIE['login_session_cookie']
 <script src="https://code-kenrick95.firebaseapp.com/js/keymap/sublime.js" type="text/javascript" charset="utf-8"></script>
 
 <script src="https://cdn.firebase.com/libs/firepad/1.1.0/firepad.min.js"></script>
+<script src="js/bootstrap-select.min.js"></script>
 
 <script>
 /*jslint browser: true, sloppy: true*/
