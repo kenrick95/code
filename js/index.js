@@ -7,14 +7,28 @@ $(document).ready(function () {
 
     // Variables
     var loggedInUser = false, codeMirror, firepadRef, firepad, userRef, firepadUser,
-        currentUser, displayName, userColor,
+        currentUser, displayName, userColor, presenceRef,
         defaultSource = '#include <iostream>'
         + '\nusing namespace std;'
         + '\n'
         + '\nint main () {'
         + '\n    cout << "Hello World!";'
         + '\n    return 0;'
-        + '\n}';
+        + '\n}',
+        COLORS = [
+            "#8A2BE2", "#7FFF00", "#DC143C", "#00FFFF", "#8FBC8F", "#FF8C00", "#FF00FF",
+            "#FFD700", "#F08080", "#90EE90", "#FF6347"],
+        DEFAULT_NICKNAMES = [
+            "Friendly Fox",
+            "Brilliant Beaver",
+            "Observant Owl",
+            "Gregarious Giraffe",
+            "Wild Wolf",
+            "Silent Seal",
+            "Wacky Whale",
+            "Curious Cat",
+            "Intelligent Iguana"
+        ];
 
     // Helper function declaration
     function createCookie(name, value, days) {
@@ -110,7 +124,8 @@ $(document).ready(function () {
         } else {
             ref = ref.push(); // generate unique location.
             //window.location = window.location + '#' + ref.key(); // add it as a hash to the URL.
-            history.pushState({hash: hash}, "", window.location + '#' + ref.key());
+            hash = ref.key();
+            history.pushState({hash: hash}, "", window.location + '#' + hash);
         }
         config.hash = hash;
         return ref;
@@ -151,27 +166,13 @@ $(document).ready(function () {
         firepadUser = currentUser;
 
         // assign new color
-        var COLORS = [
-            "#8A2BE2", "#7FFF00", "#DC143C", "#00FFFF", "#8FBC8F", "#FF8C00", "#FF00FF",
-            "#FFD700", "#F08080", "#90EE90", "#FF6347"];
-        var DEFAULT_NICKNAMES = [
-            "Friendly Fox",
-            "Brilliant Beaver",
-            "Observant Owl",
-            "Gregarious Giraffe",
-            "Wild Wolf",
-            "Silent Seal",
-            "Wacky Whale",
-            "Curious Cat",
-            "Intelligent Iguana"
-        ];
         userColor = COLORS[Math.floor(Math.random() * COLORS.length)];
         displayName = DEFAULT_NICKNAMES[Math.floor(Math.random() * DEFAULT_NICKNAMES.length)];
     }
-    console.log(currentUser);
-    console.log(firepadUser);
-    console.log(displayName);
-    console.log(userColor);
+    console.log("currentUser:", currentUser);
+    console.log("firepadUser:", firepadUser);
+    console.log("displayName:", displayName);
+    console.log("userColor:", userColor);
 
     //Firepad Initialization
     firepad = Firepad.fromCodeMirror(firepadRef, codeMirror,
@@ -358,7 +359,7 @@ $(document).ready(function () {
         $("#compileHistory").prepend(compileMessage);
     });
     firepadRef.child("ideone").on("child_changed", function (snapshot) {
-        var data = snapshot.val(), /*message = '', */compileMessage = '';
+        var data = snapshot.val(), compileMessage = '';
         if (!data.details) {
             compileMessage += 'Status: <div class="status code">' + data.status + '</div>';
         } else {
@@ -408,7 +409,7 @@ $(document).ready(function () {
 
     // on Events
     // Presence
-    var presenceRef = new Firebase('https://code-kenrick95.firebaseio.com/.info/connected');
+    presenceRef = new Firebase('https://code-kenrick95.firebaseio.com/.info/connected');
     presenceRef.on("value", function (snapshot) {
         if (snapshot.val() === true) {
             var con = firepadRef.child("connections").child(firepadUser);
@@ -448,7 +449,7 @@ $(document).ready(function () {
         };
         document.getElementsByTagName('body')[0].appendChild(s);
     }
-    $("#editorLanguage").change(function loadModeForSelectedOption(e) {
+    $("#editorLanguage").change(function loadModeForSelectedOption() {
         var selected = $("#editorLanguage option:selected"),
             script = selected.attr('data-script'),
             mode = selected.attr('data-mime-type'),
