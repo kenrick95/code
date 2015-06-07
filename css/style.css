@@ -107,6 +107,12 @@ body {
 .chatHeader {
 
 }
+.chatTime {
+    position: absolute;
+    right: 1em;
+    font-size: .75em;
+    color: #aaa;
+}
 .chatBody {
 
 }

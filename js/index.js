@@ -28,6 +28,10 @@ $(document).ready(function () {
             "Wacky Whale",
             "Curious Cat",
             "Intelligent Iguana"
+        ],
+        MONTH = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
         ];
 
     // Helper function declaration
@@ -86,11 +90,22 @@ $(document).ready(function () {
         }
         return whitespace.indexOf(str.charAt(0)) === -1 ? str : '';
     }
+    Date.prototype.toReadableString = function () {
+        return pad(this.getDate()) +
+            '&nbsp;' + MONTH[this.getMonth()] +
+            '&nbsp;' + this.getFullYear() +
+            ' ' + pad(this.getHours()) +
+            ':' + pad(this.getMinutes()) +
+            ':' + pad(this.getSeconds());
+    };
     function appendChat(author, time, message, color) {
-        var chatMessage = '<div class="chatMessage list-group-item">'
+        var dateTime = new Date(time),
+            chatMessage = '<div class="chatMessage list-group-item">'
                     + '<div class="chatHeader">'
+                    + '<div class="chatTime">'
+                    + dateTime.toReadableString()
+                    + '</div>'
                     + '<b style="color: ' + color + '">' + stringCleaner(author) + '</b>'
-                    + ' [' + time + ']:'
                     + '</div>'
                     + '<div class="chatBody">' + stringCleaner(message) + '</div>'
                     + '</div>';
