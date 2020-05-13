@@ -125,8 +125,8 @@ $(document).ready(function () {
             ref = ref.child(hash);
         } else {
             ref = ref.push(); // generate unique location.
-            //window.location = window.location + '#' + ref.key(); // add it as a hash to the URL.
-            hash = ref.key();
+            //window.location = window.location + '#' + ref.key; // add it as a hash to the URL.
+            hash = ref.key;
             history.pushState({hash: hash}, "", window.location + '#' + hash);
         }
         config.hash = hash;
@@ -179,8 +179,6 @@ $(document).ready(function () {
     //Firepad Initialization
     firepad = Firepad.fromCodeMirror(firepadRef, codeMirror,
         {defaultText: defaultSource, userId: firepadUser, userColor: userColor });
-
-        console.log('firepad', firepad)
 
     // on Events
     // Firepad
@@ -432,7 +430,7 @@ $(document).ready(function () {
     });
     firepadRef.child("language").on("value", function (snapshot) {
         config.language = snapshot.val();
-        console.log(config.language);
+        console.log('language', config.language);
         if (config.language === null) {
             config.language = {
                 script: "https://code-kenrick95.firebaseapp.com/js/mode/clike/clike.js",
