@@ -114,8 +114,13 @@ $(document).ready(function () {
      * @return {Firebase} FirepadRef of current pad
      */
     function getRef() {
-        var ref = new Firebase('https://code-kenrick95.firebaseio.com/'),
-            hash = window.location.hash.replace(/#/g, '');
+        firebase.initializeApp({
+            apiKey: config.firebaseApiKey,
+            databaseURL: config.firebaseDatabaseUrl
+        });
+        var ref = firebase.database().ref();
+        var hash = window.location.hash.replace(/#/g, '');
+
         if (hash) {
             ref = ref.child(hash);
         } else {
@@ -159,7 +164,7 @@ $(document).ready(function () {
         });
     } else {
         userRef = firepadRef.child("users").push();
-        currentUser = userRef.key();
+        currentUser = userRef.key;
         firepadUser = currentUser;
 
         // assign new color
@@ -175,6 +180,7 @@ $(document).ready(function () {
     firepad = Firepad.fromCodeMirror(firepadRef, codeMirror,
         {defaultText: defaultSource, userId: firepadUser, userColor: userColor });
 
+        console.log('firepad', firepad)
 
     // on Events
     // Firepad
@@ -371,7 +377,7 @@ $(document).ready(function () {
 
     // on Events
     // Presence
-    presenceRef = new Firebase('https://code-kenrick95.firebaseio.com/.info/connected');
+    presenceRef = firebase.database().ref('.info/connected');
     presenceRef.on("value", function (snapshot) {
         if (snapshot.val() === true) {
             var con = firepadRef.child("connections").child(firepadUser);
@@ -387,7 +393,7 @@ $(document).ready(function () {
         }
     });
     firepadRef.child("connections").on("value", function (snapshot) {
-        var len = Object.keys(snapshot.val()).length;
+        var len = snapshot.numChildren();
         $("#chatPresence").html("<strong>" + len + "</strong> people online (including you)");
     });
 

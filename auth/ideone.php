@@ -5,8 +5,8 @@ include "curl.php";
 $response['status'] = "error";
 $response['message'] = "";
 
-$api_user = $_config['api_user'];
-$api_pass = $_config['api_pass'];
+$api_user = $_config['ideone_api_user'];
+$api_pass = $_config['ideone_api_password'];
 
 $client = new SoapClient( "http://ideone.com/api/1/service.wsdl" ); //create new SoapClient
 

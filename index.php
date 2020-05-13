@@ -7,9 +7,9 @@ include "auth/config.php";
     <title>Code!</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://code-kenrick95.firebaseapp.com/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://code-kenrick95.firebaseapp.com/css/codemirror.css">
-    <link rel="stylesheet" href="https://code-kenrick95.firebaseapp.com/css/theme/solarized.css">
-    <link rel="stylesheet" href="https://cdn.firebase.com/libs/firepad/1.1.0/firepad.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.17.0/codemirror.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.17.0/theme/solarized.css">
+    <link rel="stylesheet" href="https://cdn.firebase.com/libs/firepad/1.5.10/firepad.css" />
     <link rel="stylesheet" href="css/bootstrap-select.min.css">
     <link rel="stylesheet" href="css/style.css">
 
@@ -123,49 +123,49 @@ include "auth/config.php";
                                     value="11"
                                     data-extension = "c"
                                     data-mime-type="text/x-csrc"
-                                    data-script="https://code-kenrick95.firebaseapp.com/js/mode/clike/clike.js">
+                                    data-script="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.17.0/mode/clike/clike.js">
                                     C
                                 </option>
                                 <option
                                     value="1"
                                     data-extension = "cpp"
                                     data-mime-type="text/x-c++src"
-                                    data-script="https://code-kenrick95.firebaseapp.com/js/mode/clike/clike.js">
+                                    data-script="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.17.0/mode/clike/clike.js">
                                     C++
                                 </option>
                                 <option
                                     value="10"
                                     data-extension = "java"
                                     data-mime-type="text/x-java"
-                                    data-script="https://code-kenrick95.firebaseapp.com/js/mode/clike/clike.js">
+                                    data-script="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.17.0/mode/clike/clike.js">
                                     Java
                                 </option>
                                 <option
                                     value="22"
                                     data-extension = "pas"
                                     data-mime-type="text/x-pascal"
-                                    data-script="https://code-kenrick95.firebaseapp.com/js/mode/pascal/pascal.js">
+                                    data-script="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.17.0/mode/pascal/pascal.js">
                                     Pascal
                                 </option>
                                 <option
                                     value="3"
                                     data-extension = "pl"
                                     data-mime-type="text/x-perl"
-                                    data-script="https://code-kenrick95.firebaseapp.com/js/mode/perl/perl.js">
+                                    data-script="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.17.0/mode/perl/perl.js">
                                     Perl
                                 </option>
                                 <option
                                     value="4"
                                     data-extension = "py"
                                     data-mime-type = "text/x-python"
-                                    data-script="https://code-kenrick95.firebaseapp.com/js/mode/python/python.js">
+                                    data-script="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.17.0/mode/python/python.js">
                                     Python 2
                                 </option>
                                 <option
                                     value="17"
                                     data-extension = "rb"
                                     data-mime-type = "text/x-ruby"
-                                    data-script = "https://code-kenrick95.firebaseapp.com/js/mode/ruby/ruby.js">
+                                    data-script = "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.17.0/mode/ruby/ruby.js">
                                     Ruby
                                 </option>
                                 </select>
@@ -254,22 +254,23 @@ include "auth/config.php";
 -->
 <script src="https://code-kenrick95.firebaseapp.com/js/jquery-1.11.1.min.js"></script>
 <script src="https://code-kenrick95.firebaseapp.com/js/bootstrap.min.js"></script>
-<script src="https://cdn.firebase.com/js/client/2.0.2/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.13.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.13.2/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.13.2/firebase-database.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.17.0/codemirror.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.17.0/mode/clike/clike.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.17.0/addon/search/searchcursor.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.17.0/addon/search/search.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.17.0/addon/dialog/dialog.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.17.0/addon/edit/matchbrackets.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.17.0/addon/edit/closebrackets.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.17.0/addon/comment/comment.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.17.0/addon/wrap/hardwrap.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.17.0/addon/fold/foldcode.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.17.0/addon/fold/brace-fold.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.17.0/keymap/sublime.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://firepad.io/releases/v1.5.10/firepad.min.js"></script>
 
-<script src="https://code-kenrick95.firebaseapp.com/js/codemirror.js" type="text/javascript" charset="utf-8"></script>
-<script src="https://code-kenrick95.firebaseapp.com/js/mode/clike/clike.js" type="text/javascript" charset="utf-8"></script>
-<script src="https://code-kenrick95.firebaseapp.com/addon/search/searchcursor.js"></script>
-<script src="https://code-kenrick95.firebaseapp.com/addon/search/search.js"></script>
-<script src="https://code-kenrick95.firebaseapp.com/addon/dialog/dialog.js"></script>
-<script src="https://code-kenrick95.firebaseapp.com/addon/edit/matchbrackets.js"></script>
-<script src="https://code-kenrick95.firebaseapp.com/addon/edit/closebrackets.js"></script>
-<script src="https://code-kenrick95.firebaseapp.com/addon/comment/comment.js"></script>
-<script src="https://code-kenrick95.firebaseapp.com/addon/wrap/hardwrap.js"></script>
-<script src="https://code-kenrick95.firebaseapp.com/addon/fold/foldcode.js"></script>
-<script src="https://code-kenrick95.firebaseapp.com/addon/fold/brace-fold.js"></script>
-<script src="https://code-kenrick95.firebaseapp.com/js/keymap/sublime.js" type="text/javascript" charset="utf-8"></script>
-
-<script src="https://cdn.firebase.com/libs/firepad/1.1.0/firepad.min.js"></script>
 <script src="js/bootstrap-select.min.js"></script>
 
 <script>
@@ -281,6 +282,8 @@ var config = {
     hash: null,
     domain: <?php echo "'". $_config['domain']. "'"; ?>,
     url: <?php echo "'". $_config['url']. "'"; ?>,
+    firebaseApiKey: <?php echo "'". $_config['firebase_api_key']. "'"; ?>,
+    firebaseDatabaseUrl: <?php echo "'". $_config['firebase_database_url']. "'"; ?>,
     language: null
 };
 </script>
