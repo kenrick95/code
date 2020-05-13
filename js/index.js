@@ -35,24 +35,6 @@ $(document).ready(function () {
         ];
 
     // Helper function declaration
-    function createCookie(name, value, days) {
-        var date, expires;
-        if (days) {
-            date = new Date();
-            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-            expires = "; expires=" + date.toGMTString();
-        } else { expires = ""; }
-        document.cookie = name + "=" + value + expires + "; path=/";
-    }
-    function readCookie(name) {
-        var nameEQ = name + "=", ca = document.cookie.split(';'), i, c;
-        for (i = 0; i < ca.length; i++) {
-            c = ca[i];
-            while (c.charAt(0) === ' ') { c = c.substring(1, c.length); }
-            if (c.indexOf(nameEQ) === 0) { return c.substring(nameEQ.length, c.length); }
-        }
-        return null;
-    }
     function pad(number) {
         if (number < 10) { return '0' + number; }
         return number;
@@ -164,7 +146,7 @@ $(document).ready(function () {
     firepadRef = getRef();
 
     // Firepad User
-    currentUser  = readCookie("login_session_cookie");
+    currentUser  =  null
     if (currentUser !== null) {
         loggedInUser = true;
         currentUser = currentUser.replace(/%40/g, "@"); // "@" is encoded as %40 and stored in the cookie
@@ -210,41 +192,6 @@ $(document).ready(function () {
         $("#chatName").val(displayName);
         onresize();
         $("#overlay").fadeOut();
-    });
-
-    // on Events
-    // Mozilla Persona
-    $("#sign_in").click(function () {
-        navigator.id.request();
-    });
-    $("#sign_out").click(function () {
-        navigator.id.logout();
-    });
-
-    navigator.id.watch({
-        loggedInUser: loggedInUser ? currentUser : null,
-        onlogin: function (assertion) {
-            $.ajax({
-                type: 'POST',
-                url: 'auth/login.php', // This is a URL on your website.
-                data: {assertion: assertion},
-                success: function (res, status, xhr) { 
-                    window.location.reload();
-                },
-                error: function (xhr, status, err) {
-                    navigator.id.logout();
-                    console.error("Login failure: " + err);
-                }
-            });
-        },
-        onlogout: function () {
-            $.ajax({
-                type: 'POST',
-                url: 'auth/logout.php',
-                success: function (res, status, xhr) { window.location.reload(); },
-                error: function (xhr, status, err) { console.error("Logout failure: " + err); }
-            });
-        }
     });
 
     // on Events

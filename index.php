@@ -1,19 +1,5 @@
 <?php
-session_start();
 include "auth/config.php";
-
-$loggedIn = false;
-$email = '';
-
-if (isset($_SESSION['login_session'], $_COOKIE['login_session_cookie'])) {
-    $loggedIn = true;
-    $email = $_SESSION['login_session'];
-}
-if (isset($_SESSION['login_session']) xor isset($_COOKIE['login_session_cookie'])) {
-    ob_start();
-    include "auth/logout.php";
-    ob_end_clean();
-}
 ?><!DOCTYPE html>
 <html lang="en">
 <meta charset="UTF-8">
@@ -57,25 +43,6 @@ if (isset($_SESSION['login_session']) xor isset($_COOKIE['login_session_cookie']
                 <li><a id="help" title="Help" class="pointer" data-toggle="modal" data-target="#helpModal">Help</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-            <?php
-                if ($loggedIn) {
-            ?><li class="dropdown" id="user_menu"><a id="username" class="dropdown-toggle pointer" data-toggle="dropdown">
-                <?php
-                    echo $email;
-                ?> <span class="caret"></span></a>
-                <ul class="dropdown-menu" role="menu">
-                    <li><a id="sign_out" class="pointer">Sign out</a></li>
-                </ul>
-                </li>
-                <?php
-                } else {
-                ?>
-                <li id="user_menu"><a id="sign_in" class="pointer">
-                    <img src="img/persona-logo-glyph.png" class="persona_logo"> Sign in
-                </a></li>
-            <?php
-                }
-            ?>
         <div id="sidebar">
         <div id="sidebarContainer" class="panel panel-primary">
         <!-- Nav tabs -->
@@ -257,7 +224,7 @@ if (isset($_SESSION['login_session']) xor isset($_COOKIE['login_session_cookie']
             </div>
             <div class="modal-body">
                 <p>Welcome to <b>Code</b>, a collaborative coding web-based application built to suit your coding needs. Built using CodeMirror with Sublime keymap binding, it serves as a powerful code editor. Moreover, data persistency is achived powered by Firebase and Firepad. The code can be directly run at the cloud via Ideone (Sphere Engine) and exported to GitHub Gist. To enhance the collaboration experience, a chat application is up there. Enjoy your time here and tell it to your friends.</p>
-                <p>Do coding at the large area on the left. Do chatting, run codes (via Ideone), or change settings at sidebar on the right. Sign in (via Mozilla Persona) to achieve settings persistency. Export to GitHub Gist by "Export" button. Share the link by copying the URL of the page, or by getting the URL at "Share" button. "Help" button pops this window up.</p>
+                <p>Do coding at the large area on the left. Do chatting, run codes (via Ideone), or change settings at sidebar on the right. Export to GitHub Gist by "Export" button. Share the link by copying the URL of the page, or by getting the URL at "Share" button. "Help" button pops this window up.</p>
                 <p>If you find this application useful, please consider donating.
                 <!-- Donate -->
                 <form class="pp-donate" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
@@ -270,7 +237,7 @@ if (isset($_SESSION['login_session']) xor isset($_COOKIE['login_session_cookie']
                 </form>
                 <!-- /.Donate -->
                 </p>
-                <p>Credits: Code! uses Sphere Engine™ (compile and run), Bootstrap, CodeMirror (syntax highlighting), Firebase and Firepad (real-time sync of code, chat, and presence), Mozilla Persona (identity provider), GitHub Gist API (exporting source code).</p>
+                <p>Credits: Code! uses Sphere Engine™ (compile and run), Bootstrap, CodeMirror (syntax highlighting), Firebase and Firepad (real-time sync of code, chat, and presence), GitHub Gist API (exporting source code).</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -282,13 +249,11 @@ if (isset($_SESSION['login_session']) xor isset($_COOKIE['login_session_cookie']
 <!-- JavaScripts:
 * JQuery
 * Bootstrap
-* Mozilla Persona
 * Codemirror, language-specific highlighter, addon, sublime keymap
 * Firepad
 -->
 <script src="https://code-kenrick95.firebaseapp.com/js/jquery-1.11.1.min.js"></script>
 <script src="https://code-kenrick95.firebaseapp.com/js/bootstrap.min.js"></script>
-<script src="https://login.persona.org/include.js"></script>
 <script src="https://cdn.firebase.com/js/client/2.0.2/firebase.js"></script>
 
 <script src="https://code-kenrick95.firebaseapp.com/js/codemirror.js" type="text/javascript" charset="utf-8"></script>
@@ -311,8 +276,8 @@ if (isset($_SESSION['login_session']) xor isset($_COOKIE['login_session_cookie']
 /*jslint browser: true, sloppy: true*/
 /*global CodeMirror, jQuery, $ */
 var config = {
-    username: <?php if ($loggedIn) { echo '"'. $email . '"'; } else { echo "null"; } ?>,
-    avatarUrl: <?php if ($loggedIn) { echo '"http://www.gravatar.com/avatar/'. md5($email) . '.png"'; } else { echo "null"; } ?>,
+    username: null,
+    avatarUrl: null,
     hash: null,
     domain: <?php echo "'". $_config['domain']. "'"; ?>,
     url: <?php echo "'". $_config['url']. "'"; ?>,
